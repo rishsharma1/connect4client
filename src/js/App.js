@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { connect } from "react-redux";
 import '../css/App.css';
+import {sendInitMessage} from './api';
 import { setUserName } from '../js/actions/userActions'
 
 
@@ -18,12 +19,57 @@ const mapStateToProps = function(state) {
 }
 
 
+class PlayOnlineButton extends Component {
+
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this, this.props.history);
+  }
+
+  handleClick(history) {
+    history.push('/play')
+    sendInitMessage(this.props.user.userName)
+  }
+
+  render() {
+    return (
+      <div class="div">
+      <Button outline color="secondary" type="button" size="lg" onClick={this.handleClick}>Play Online</Button>
+      </div>
+    )
+  }
+}
+
+class PlayAIButton extends Component {
+
+  constructor(props) {
+    super(props);
+    this.handleClick = this.handleClick.bind(this, this.props.history);
+  }
+
+  handleClick(history) {
+    history.push('/play')
+    sendInitMessage(this.props.user.userName)
+  }
+
+  render() {
+    return (
+      <div class="div">
+      <Button outline color="secondary" type="button" size="lg" onClick={this.handleClick}>Play AI</Button>
+      </div>
+    )
+  }
+
+}
+
+
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   handleChange(event) {
@@ -31,28 +77,26 @@ class App extends Component {
   }
 
   handleSubmit(event) {
-    alert('A username was submitted: '+this.state.value);
+    window.alert('A username was submitted: '+this.state.value);
     event.preventDefault(); 
+  }
+  
+  handleClick() {
+    this.props.history.push('/play')
+    
   }
 
 
   render() {
     return (
       <div className="App">
-        
-        <div class="div">
-          <Button outline color="secondary" size="lg" onClick={() => this.props.history.push('/play')}>Play Online</Button>
-        </div>
-        <div class="div">
-          <Button outline color="secondary" size="lg" onClick={() => window.location.href = '/play'}>Play AI</Button>
-        </div>
-        <div>
-          <Form onSubmit={this.handleSubmit}>
-            <FormGroup>
-              <Input type="username" name="userName" id="userName" placeholder="UserName" onChange={this.handleChange}/>
-            </FormGroup>
-          </Form>
-        </div>
+        <Form>
+          <FormGroup role="form">
+            <PlayOnlineButton history={this.props.history} user={this.props.user}/>
+            <PlayAIButton history={this.props.history} user={this.props.user}/>
+            <Input type="username" name="userName" id="userName" placeholder="UserName" onChange={this.handleChange}/>
+          </FormGroup>
+        </Form>
       </div>
       
     );
