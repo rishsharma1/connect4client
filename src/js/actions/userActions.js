@@ -1,4 +1,5 @@
 export const SET_USER_NAME = 'SET_USER_NAME'
+export const SET_USER_COLOR = 'SET_USER_COLOR'
 
 
 export function setUserName(name) {
@@ -7,3 +8,11 @@ export function setUserName(name) {
         name
     }
 }
+
+export function setPlayerColor(color) {
+    return {
+        type: SET_USER_COLOR,
+        color
+    }
+}
+

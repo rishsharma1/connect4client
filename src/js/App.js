@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import {Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { connect } from "react-redux";
 import '../css/App.css';
-import {sendInitMessage} from './api';
 import { setUserName } from '../js/actions/userActions'
+import { sendMessage, connect as connectSocket, disconnect} from '../js/actions/socketActions'
+
 
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    updateUserName: (username) => dispatch(setUserName(username))
+    updateUserName: (username) => dispatch(setUserName(username)),
+    connectToSocket: () => dispatch(connectSocket()),
+    sendMessageToSocket: (msg) => dispatch(sendMessage(msg))
   }
 }
 
@@ -23,12 +26,12 @@ class PlayOnlineButton extends Component {
 
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this, this.props.history);
+    this.handleClick = this.handleClick.bind(this, this.props);
   }
 
-  handleClick(history) {
-    history.push('/play')
-    sendInitMessage(this.props.user.userName)
+  handleClick(props) {
+    props.history.push('/play')
+    this.props.sendMessageToSocket({"Action": "init", "Content":{"UserName":this.props.user.userName}})
   }
 
   render() {
@@ -44,12 +47,12 @@ class PlayAIButton extends Component {
 
   constructor(props) {
     super(props);
-    this.handleClick = this.handleClick.bind(this, this.props.history);
+    this.handleClick = this.handleClick.bind(this, this.props);
   }
 
-  handleClick(history) {
-    history.push('/play')
-    sendInitMessage(this.props.user.userName)
+  handleClick(props) {
+    props.history.push('/play')
+    this.props.sendMessageToSocket({"Action": "init", "Content":{"UserName":this.props.user.userName}})
   }
 
   render() {
@@ -88,12 +91,14 @@ class App extends Component {
 
 
   render() {
+    this.props.connectToSocket()
+
     return (
       <div className="App">
         <Form>
           <FormGroup role="form">
-            <PlayOnlineButton history={this.props.history} user={this.props.user}/>
-            <PlayAIButton history={this.props.history} user={this.props.user}/>
+            <PlayOnlineButton history={this.props.history} user={this.props.user} sendMessageToSocket={this.props.sendMessageToSocket}/>
+            <PlayAIButton history={this.props.history} user={this.props.user} sendMessageToSocket={this.props.sendMessageToSocket}/>
             <Input type="username" name="userName" id="userName" placeholder="UserName" onChange={this.handleChange}/>
           </FormGroup>
         </Form>
