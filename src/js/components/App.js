@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 import { connect } from "react-redux";
-import '../css/App.css';
-import { setUserName } from '../js/actions/userActions'
-import { sendMessage, connect as connectSocket, disconnect} from '../js/actions/socketActions'
+import '../../css/App.css';
+import { setUserName } from '../../js/actions/userActions'
+import { sendMessage, connect as connectSocket, disconnect} from '../../js/actions/socketActions'
 
 
 
@@ -31,7 +31,7 @@ class PlayOnlineButton extends Component {
 
   handleClick(props) {
     props.history.push('/play')
-    this.props.sendMessageToSocket({"Action": "init", "Content":{"UserName":this.props.user.userName}})
+    this.props.sendMessageToSocket({"Action": "INIT", "Content":{"UserName":this.props.user.userName}})
   }
 
   render() {
@@ -52,7 +52,7 @@ class PlayAIButton extends Component {
 
   handleClick(props) {
     props.history.push('/play')
-    this.props.sendMessageToSocket({"Action": "init", "Content":{"UserName":this.props.user.userName}})
+    this.props.sendMessageToSocket({"Action": "INIT", "Content":{"UserName":this.props.user.userName}})
   }
 
   render() {

@@ -1,13 +1,27 @@
 export const SET_GAME_UPDATE = 'SET_GAME'
 export const SET_GAME_UPDATE_LOADING = 'SET_GAME_UPDATE_LOADING'
-export const SET_CONNECTED_STATE = 'SET_CONNECTED_STATE'
-export const MESSAGE_RECEIVED = 'MESSAGE_RECEIVED'
-export const SET_CONNECTING_STATE = 'SET_CONNECTING_STATE'
+export const SET_GAME_UPDATE_KEY = 'SET_GAME_UPDATE_KEY'
+export const SET_GAME_UPDATE_TURN = 'SET_GAME_UPDATE_TURN'
 
-function setGameUpdate(game) {
+
+export function setGameUpdate(game) {
     return {
         type: SET_GAME_UPDATE,
         game
+    }
+}
+
+export function setGameKeyUpdate(key) {
+    return {
+        type: SET_GAME_UPDATE_KEY,
+        key
+    }
+}
+
+export function setGameTurnUpdate(turn) {
+    return {
+        type: SET_GAME_UPDATE_TURN,
+        turn 
     }
 }
 
@@ -18,23 +32,3 @@ export function setGameUpdateLoading(loading) {
     }
 }
 
-export function connected(c) {
-    return {
-        type: SET_CONNECTED_STATE,
-        c
-    }
-}
-
-export function connecting(c) {
-    return {
-        type: SET_CONNECTING_STATE,
-        c
-    }
-} 
-
-export function messageReceived(msg) {
-    return {
-        type: MESSAGE_RECEIVED,
-        msg
-    }
-}

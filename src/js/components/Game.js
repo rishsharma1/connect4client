@@ -1,17 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-import '../css/Game.css';
+import '../../css/Game.css';
+import * as socketActions from '../actions/socketActions'
 import { connect } from "react-redux";
+import { sendMessage } from '../actions/socketActions'
+
 
 
 function mapStateToProps(state) {
     return { 
         user: state.user,
-        game: state.game,
-        loading: state.loading
+        game: state.game
     }
 }
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+      sendMessageToSocket: (msg) => dispatch(sendMessage(msg))
+    }
+  }
 
 function Circle(props) {
     return (
@@ -115,8 +123,21 @@ class Game extends React.Component {
     }
 
     handleClick(i) {
-        const circles = this.state.circles.slice();
-        circles[i] = "R";
+        const circles = this.props.game.game;
+        var column
+
+        if(i < 7) {
+            column = i
+        }
+        else if (i % 6 == 0) {
+            column = 6
+        }
+        else {
+            column = (i % 6) - 1
+        }
+        console.log("Column: "+column+" i: "+i)
+        
+        this.props.sendMessageToSocket({"Action": "PLAY_MOVE", "Content":{"Column":String(column), "GameKey": this.props.game.key, "UserName":this.props.user.userName}})
     }
 
     render () {
@@ -126,7 +147,7 @@ class Game extends React.Component {
                 <UserName userName={this.props.user.userName}/>
                 <div className="game">
                     <Board
-                        circles={this.props.game}
+                        circles={this.props.game.game}
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
@@ -136,4 +157,4 @@ class Game extends React.Component {
     }
 }
 
-export default connect(mapStateToProps)(Game);
+export default connect(mapStateToProps,mapDispatchToProps)(Game);

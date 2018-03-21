@@ -1,4 +1,5 @@
-import * as actions from './actions/gameActions'
+import * as socketActions from './actions/socketActions'
+import * as gameActions from './actions/gameActions'
 //var ws = new WebSocket("ws://localhost:1200/ws")
 
 const UPDATE_MESSAGE = "UPDATE_MESSAGE"
@@ -11,19 +12,32 @@ const socketMiddleware = (function() {
     var socket = null
     
     const onOpen = (ws,store,token) => evt => {
-        store.dispatch(actions.connected(true))
+        store.dispatch(socketActions.connected(true))
     }
 
     const onClose = (ws,store) => evt => {
-        store.dispatch(actions.connected(false));
+        store.dispatch(socketActions.connected(false));
     }
 
     const onMessage = (ws,store) => evt => {
         var msg = JSON.parse(evt.data)
-        switch(msg.type) {
+        console.log(msg)
+        switch(msg.action) {
 
             case UPDATE_MESSAGE:
-                store.dispatch(actions.messageReceived(msg))
+                console.log("UPDATE MESSAGE GOT IT")
+                store.dispatch(gameActions.setGameUpdate(msg["og"]["OGame"]["Board"]))
+                store.dispatch(gameActions.setGameKeyUpdate(msg["og"]["GameKey"]))
+                store.dispatch(gameActions.setGameTurnUpdate(msg["og"]["CurrentTurn"]))
+                //console.log(store.getState())
+                // send a message to update the game 
+                console.log(store.getState()["game"]["turn"])
+                if(store.getState()["game"]["turn"] != store.getState()["user"]["userName"]) {
+                    var userName = store.getState()["user"]["userName"]
+                    var key = store.getState()["game"]["key"]
+                    store.dispatch(socketActions.sendMessage({"Action": "UPDATE_REQUEST", "Content": {"UserName": userName, "GameKey": key}}))
+                }
+                
                 break
             default:
                 console.log("Received unknown message type: '"+msg.type+"'")
@@ -39,7 +53,7 @@ const socketMiddleware = (function() {
                 if (socket != null) {
                     socket.close()
                 }
-                store.dispatch(actions.connecting(true))
+                store.dispatch(socketActions.connecting(true))
 
                 socket = new WebSocket("ws://localhost:1200/ws")
                 socket.onmessage = onMessage(socket,store)
@@ -52,7 +66,7 @@ const socketMiddleware = (function() {
                     socket.close()
                 }
                 socket = null
-                store.dispatch(actions.connected(false))
+                store.dispatch(socketActions.connected(false))
                 break
             
             case SEND_MESSAGE:
