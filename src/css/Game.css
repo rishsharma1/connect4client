@@ -37,6 +37,21 @@ body {
     text-align: center;
     width: 22px;
   }
+
+  .loading {
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+  }
+
+  .loadingMove {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    
+  }
   
   .circle:focus {
     outline: none;

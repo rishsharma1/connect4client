@@ -1,6 +1,6 @@
 import * as socketActions from './actions/socketActions'
 import * as gameActions from './actions/gameActions'
-//var ws = new WebSocket("ws://localhost:1200/ws")
+import * as userActions from './actions/userActions'
 
 const UPDATE_MESSAGE = "UPDATE_MESSAGE"
 const CONNECT = "CONNECT"
@@ -25,17 +25,21 @@ const socketMiddleware = (function() {
         switch(msg.action) {
 
             case UPDATE_MESSAGE:
-                console.log("UPDATE MESSAGE GOT IT")
+                var userName = store.getState()["user"]["userName"]
+
                 store.dispatch(gameActions.setGameUpdate(msg["og"]["OGame"]["Board"]))
                 store.dispatch(gameActions.setGameKeyUpdate(msg["og"]["GameKey"]))
                 store.dispatch(gameActions.setGameTurnUpdate(msg["og"]["CurrentTurn"]))
-                //console.log(store.getState())
-                // send a message to update the game 
-                console.log(store.getState()["game"]["turn"])
-                if(store.getState()["game"]["turn"] != store.getState()["user"]["userName"]) {
-                    var userName = store.getState()["user"]["userName"]
+                store.dispatch(userActions.setPlayerColor(msg["og"]["PlayerColors"][userName]))
+                store.dispatch(gameActions.setGameFound(true))
+
+                if(store.getState()["game"]["turn"] != userName) {
                     var key = store.getState()["game"]["key"]
                     store.dispatch(socketActions.sendMessage({"Action": "UPDATE_REQUEST", "Content": {"UserName": userName, "GameKey": key}}))
+                    store.dispatch(gameActions.setWaitingForMove(true))
+                }
+                else {
+                    store.dispatch(gameActions.setWaitingForMove(false))
                 }
                 
                 break

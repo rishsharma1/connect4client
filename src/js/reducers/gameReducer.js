@@ -4,7 +4,9 @@ import {
     SET_GAME_UPDATE,
     SET_GAME_UPDATE_LOADING,
     SET_GAME_UPDATE_KEY,
-    SET_GAME_UPDATE_TURN
+    SET_GAME_UPDATE_TURN,
+    SET_GAME_FOUND,
+    SET_WAITING_FOR_MOVE
 } from '../actions/gameActions'
 
 function game(state=Array(42).fill(null),action) {
@@ -50,9 +52,33 @@ function loading(state=false,action) {
     return state 
 }
 
+function gameFound(state=false,action) {
+
+    switch(action.type) {
+
+        case SET_GAME_FOUND:
+            return action.gameFound
+    }
+
+    return state
+}
+
+function waitingForMove(state=false,action) {
+
+    switch(action.type) {
+
+        case SET_WAITING_FOR_MOVE:
+            return action.waitingForMove
+    }
+
+    return state
+}
+
 export default combineReducers({
     game,
     loading,
     key,
-    turn
+    turn,
+    gameFound,
+    waitingForMove
 })

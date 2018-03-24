@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+import {Button, Form, FormGroup, Label, Input, FormText,Alert,Container,Row,Col } from 'reactstrap';
 import '../../css/Game.css';
 import * as socketActions from '../actions/socketActions'
 import { connect } from "react-redux";
 import { sendMessage } from '../actions/socketActions'
+import ReactLoading from 'react-loading'
 
 
 
@@ -27,10 +28,68 @@ function Circle(props) {
     );
 }
 
-function UserName(props) {
+function MakeAMove(props) {
 
     return (
-        <p className="text-muted username">{props.userName}</p>
+         <p className="text-muted username">Make a move {props.userName}.</p>
+    );
+}
+
+function GameStatus(props) {
+
+    if(props.waiting) {
+
+        return (
+            <div>
+                <ReactLoading type={"bubbles"} color="#D3D3D3" className="loadingMove" />
+                <WaitingForPlayerMove turn={props.turn}/>
+            </div>
+        );
+
+    }
+    else if(props.gameFound) {
+
+        return (
+            <div>
+                <Container>
+                    <MakeAMove userName={props.userName}/>
+                </Container>
+            </div>
+        );
+
+    }
+
+    return null
+
+}
+
+function WaitingForPlayer(props) {
+
+    return (
+        <p className="text-muted username">Waiting for a game...</p>
+    );
+}
+
+function WaitingForPlayerMove(props) {
+
+    return (
+        <p className="text-muted username">Waiting for {props.turn} to make move...</p>
+    );
+
+}
+
+function Loading(props) {
+    return (
+            <div>
+                <Container>
+                    <Row>
+                        <ReactLoading type={"spin"} color="#000" className="loading"/>
+                    </Row>
+                    <Row>
+                        <WaitingForPlayer/>
+                    </Row>
+                </Container>
+            </div>
     );
 }
 
@@ -53,6 +112,13 @@ class Board extends React.Component {
 
 
     render() {
+
+        if(!this.props.gameFound) {
+            return (
+                <Loading/>
+            )
+        }
+
         return (
 
         <div>
@@ -120,6 +186,15 @@ class Game extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            visible: false
+        }
+        this.onDismiss = this.onDismiss.bind(this)
+    }
+
+    onDismiss() {
+        this.setState({visible: false})
     }
 
     handleClick(i) {
@@ -136,18 +211,36 @@ class Game extends React.Component {
             column = (i % 6) - 1
         }
         console.log("Column: "+column+" i: "+i)
-        
-        this.props.sendMessageToSocket({"Action": "PLAY_MOVE", "Content":{"Column":String(column), "GameKey": this.props.game.key, "UserName":this.props.user.userName}})
+        console.log("Current turn: "+this.props.game.turn)
+        console.log("username: "+this.props.user.userName)
+        if(this.props.game.turn != this.props.user.userName) {
+            console.log("turn does not equal username")
+            this.state.visible = true
+        }
+        else {
+            this.props.sendMessageToSocket({"Action": "PLAY_MOVE", 
+                                            "Content":{"Column":String(column), 
+                                            "GameKey": this.props.game.key, 
+                                            "UserName":this.props.user.userName}})
+        }
     }
 
     render () {
         return (
 
             <div>
-                <UserName userName={this.props.user.userName}/>
+                <Alert color="danger" isOpen={this.state.visible} toggle={this.onDismiss}>
+                    Not your turn!
+                </Alert>
+                <GameStatus userName={this.props.user.userName} 
+                            waiting={this.props.game.waitingForMove}
+                            turn={this.props.game.turn}
+                            gameFound={this.props.game.gameFound}
+                />
                 <div className="game">
                     <Board
                         circles={this.props.game.game}
+                        gameFound={this.props.game.gameFound}
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
