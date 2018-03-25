@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Form, FormGroup, Label, Input, FormText,UncontrolledAlert,Alert,Container,Row,Col } from 'reactstrap';
+import {Button,UncontrolledAlert,Alert,Container,Row,Col } from 'reactstrap';
 import '../../css/Game.css';
 import * as socketActions from '../actions/socketActions'
 import * as gameActions from '../actions/gameActions'
 import { connect } from "react-redux";
 import ReactLoading from 'react-loading'
 
-
+// NUM_COLS is number of columns on the board
+const NUM_COLS = 7
+// PLAY_MOVE is message indentifier for playing a move
+const PLAY_MOVE = "PLAY_MOVE"
 
 function mapStateToProps(state) {
     return { 
@@ -195,8 +198,8 @@ class Game extends React.Component {
     handleClick(i) {
         const circles = this.props.game.game
 
-        if(i > 6) {
-            this.handleClick(i-7)
+        if(i > NUM_COLS - 1) {
+            this.handleClick(i-NUM_COLS)
         }
         else {
 
@@ -205,25 +208,13 @@ class Game extends React.Component {
             }
             else {
                 this.props.invalidTurn(false)
-                this.props.sendMessageToSocket({"Action": "PLAY_MOVE", 
+                this.props.sendMessageToSocket({"Action": PLAY_MOVE, 
                                                 "Content":{"Column":String(i), 
                                                 "GameKey": this.props.game.key, 
                                                 "UserName":this.props.user.userName}})
             }
 
         }
-
-        /*
-        if(i < 7) {
-            column = i
-        }
-        else if (i % 6 == 0) {
-            column = 6
-        }
-        else {
-            column = (i % 6) - 1
-        }
-        */
 
     }
 
