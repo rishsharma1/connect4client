@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Form, FormGroup, Label, Input, FormText,Alert,Container,Row,Col } from 'reactstrap';
+import {Button, Form, FormGroup, Label, Input, FormText,UncontrolledAlert,Container,Row,Col } from 'reactstrap';
 import '../../css/Game.css';
 import * as socketActions from '../actions/socketActions'
+import * as gameActions from '../actions/gameActions'
 import { connect } from "react-redux";
-import { sendMessage } from '../actions/socketActions'
 import ReactLoading from 'react-loading'
 
 
@@ -18,7 +18,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-      sendMessageToSocket: (msg) => dispatch(sendMessage(msg))
+      sendMessageToSocket: (msg) => dispatch(socketActions.sendMessage(msg)),
+      invalidTurn: (invalid) => dispatch(gameActions.setInvalidTurn(invalid))
     }
   }
 
@@ -91,6 +92,20 @@ function Loading(props) {
                 </Container>
             </div>
     );
+}
+
+
+function NotYourTrunAlert(props) {
+
+    console.log("visible: "+props.visible)
+    if(props.invalidTurn) {
+        return (
+            <UncontrolledAlert color="danger">
+                    Not your turn!
+            </UncontrolledAlert>
+        )
+    }
+    return null
 }
 
 
@@ -215,9 +230,10 @@ class Game extends React.Component {
         console.log("username: "+this.props.user.userName)
         if(this.props.game.turn != this.props.user.userName) {
             console.log("turn does not equal username")
-            this.state.visible = true
+            this.props.invalidTurn(true)
         }
         else {
+            this.props.invalidTurn(false)
             this.props.sendMessageToSocket({"Action": "PLAY_MOVE", 
                                             "Content":{"Column":String(column), 
                                             "GameKey": this.props.game.key, 
@@ -229,9 +245,7 @@ class Game extends React.Component {
         return (
 
             <div>
-                <Alert color="danger" isOpen={this.state.visible} toggle={this.onDismiss}>
-                    Not your turn!
-                </Alert>
+                <NotYourTrunAlert invalidTurn={this.props.game.invalidTurn}/>
                 <GameStatus userName={this.props.user.userName} 
                             waiting={this.props.game.waitingForMove}
                             turn={this.props.game.turn}

@@ -6,7 +6,8 @@ import {
     SET_GAME_UPDATE_KEY,
     SET_GAME_UPDATE_TURN,
     SET_GAME_FOUND,
-    SET_WAITING_FOR_MOVE
+    SET_WAITING_FOR_MOVE,
+    SET_INVALID_TURN
 } from '../actions/gameActions'
 
 function game(state=Array(42).fill(null),action) {
@@ -74,11 +75,23 @@ function waitingForMove(state=false,action) {
     return state
 }
 
+function invalidTurn(state=false,action) {
+
+    switch(action.type) {
+
+        case SET_INVALID_TURN:
+            return action.invalidTurn
+    }
+    
+    return state
+}
+
 export default combineReducers({
     game,
     loading,
     key,
     turn,
     gameFound,
-    waitingForMove
+    waitingForMove,
+    invalidTurn
 })

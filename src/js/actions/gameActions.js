@@ -4,6 +4,7 @@ export const SET_GAME_UPDATE_KEY = 'SET_GAME_UPDATE_KEY'
 export const SET_GAME_UPDATE_TURN = 'SET_GAME_UPDATE_TURN'
 export const SET_GAME_FOUND = 'SET_GAME_FOUND'
 export const SET_WAITING_FOR_MOVE = 'SET_WAITING_FOR_MOVE'
+export const SET_INVALID_TURN = 'SET_INVALID_TURN'
 
 
 export function setGameUpdate(game) {
@@ -48,3 +49,9 @@ export function setWaitingForMove(waitingForMove) {
     }
 }
 
+export function setInvalidTurn(invalidTurn) {
+    return {
+        type: SET_INVALID_TURN,
+        invalidTurn
+    }
+}

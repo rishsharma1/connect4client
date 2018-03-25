@@ -40,6 +40,7 @@ const socketMiddleware = (function() {
                 }
                 else {
                     store.dispatch(gameActions.setWaitingForMove(false))
+                    store.dispatch(gameActions.setInvalidTurn(false))
                 }
                 
                 break
