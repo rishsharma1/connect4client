@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Button, Form, FormGroup, Label, Input, FormText,UncontrolledAlert,Container,Row,Col } from 'reactstrap';
+import {Button, Form, FormGroup, Label, Input, FormText,UncontrolledAlert,Alert,Container,Row,Col } from 'reactstrap';
 import '../../css/Game.css';
 import * as socketActions from '../actions/socketActions'
 import * as gameActions from '../actions/gameActions'
@@ -94,22 +94,6 @@ function Loading(props) {
     );
 }
 
-
-function NotYourTrunAlert(props) {
-
-    console.log("visible: "+props.visible)
-    if(props.invalidTurn) {
-        return (
-            <UncontrolledAlert color="danger">
-                    Not your turn!
-            </UncontrolledAlert>
-        )
-    }
-    return null
-}
-
-
-
 class Board extends React.Component {
 
     constructor(props) {
@@ -201,15 +185,11 @@ class Game extends React.Component {
 
     constructor(props) {
         super(props);
-
-        this.state = {
-            visible: false
-        }
         this.onDismiss = this.onDismiss.bind(this)
     }
 
     onDismiss() {
-        this.setState({visible: false})
+        this.props.invalidTurn(false)
     }
 
     handleClick(i) {
@@ -229,7 +209,6 @@ class Game extends React.Component {
         console.log("Current turn: "+this.props.game.turn)
         console.log("username: "+this.props.user.userName)
         if(this.props.game.turn != this.props.user.userName) {
-            console.log("turn does not equal username")
             this.props.invalidTurn(true)
         }
         else {
@@ -245,7 +224,9 @@ class Game extends React.Component {
         return (
 
             <div>
-                <NotYourTrunAlert invalidTurn={this.props.game.invalidTurn}/>
+                <Alert color="danger" isOpen={this.props.game.invalidTurn} toggle={this.onDismiss}>
+                    Not your turn!
+                </Alert>
                 <GameStatus userName={this.props.user.userName} 
                             waiting={this.props.game.waitingForMove}
                             turn={this.props.game.turn}
