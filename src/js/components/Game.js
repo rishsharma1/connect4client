@@ -193,9 +193,27 @@ class Game extends React.Component {
     }
 
     handleClick(i) {
-        const circles = this.props.game.game;
-        var column
+        const circles = this.props.game.game
 
+        if(i > 6) {
+            this.handleClick(i-7)
+        }
+        else {
+
+            if(this.props.game.turn != this.props.user.userName) {
+                this.props.invalidTurn(true)
+            }
+            else {
+                this.props.invalidTurn(false)
+                this.props.sendMessageToSocket({"Action": "PLAY_MOVE", 
+                                                "Content":{"Column":String(i), 
+                                                "GameKey": this.props.game.key, 
+                                                "UserName":this.props.user.userName}})
+            }
+
+        }
+
+        /*
         if(i < 7) {
             column = i
         }
@@ -205,19 +223,8 @@ class Game extends React.Component {
         else {
             column = (i % 6) - 1
         }
-        console.log("Column: "+column+" i: "+i)
-        console.log("Current turn: "+this.props.game.turn)
-        console.log("username: "+this.props.user.userName)
-        if(this.props.game.turn != this.props.user.userName) {
-            this.props.invalidTurn(true)
-        }
-        else {
-            this.props.invalidTurn(false)
-            this.props.sendMessageToSocket({"Action": "PLAY_MOVE", 
-                                            "Content":{"Column":String(column), 
-                                            "GameKey": this.props.game.key, 
-                                            "UserName":this.props.user.userName}})
-        }
+        */
+
     }
 
     render () {
