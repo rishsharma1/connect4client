@@ -41,7 +41,7 @@ function MakeAMove(props) {
 
 function GameStatus(props) {
 
-    if(props.waiting) {
+    if(props.waiting && !props.winner) {
 
         return (
             <div>
@@ -51,7 +51,7 @@ function GameStatus(props) {
         );
 
     }
-    else if(props.gameFound) {
+    else if(props.gameFound && !props.winner) {
 
         return (
             <div>
@@ -80,6 +80,18 @@ function WaitingForPlayerMove(props) {
         <p className="text-muted username">Waiting for {props.turn} to make move...</p>
     );
 
+}
+
+function SummaryWinner(props) {
+    return (
+        <p className="text-muted username">Winner: {props.winner}</p>
+    );
+}
+
+function SummaryDraw(props) {
+    return (
+        <p className="text-muted username">The game was a draw.</p>
+    );
 }
 
 function Loading(props) {
@@ -118,6 +130,11 @@ class Board extends React.Component {
         if(!this.props.gameFound) {
             return (
                 <Loading/>
+            )
+        }
+        else if(this.props.winner) {
+            return (
+                <SummaryWinner winner={this.props.winner}/>
             )
         }
 
@@ -229,12 +246,14 @@ class Game extends React.Component {
                             waiting={this.props.game.waitingForMove}
                             turn={this.props.game.turn}
                             gameFound={this.props.game.gameFound}
+                            winner={this.props.game.winner}
                 />
                 <div className="game">
                     <Board
                         circles={this.props.game.game}
                         gameFound={this.props.game.gameFound}
                         onClick={(i) => this.handleClick(i)}
+                        winner={this.props.game.winner}
                     />
                 </div>
             </div>

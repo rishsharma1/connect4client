@@ -5,6 +5,8 @@ export const SET_GAME_UPDATE_TURN = 'SET_GAME_UPDATE_TURN'
 export const SET_GAME_FOUND = 'SET_GAME_FOUND'
 export const SET_WAITING_FOR_MOVE = 'SET_WAITING_FOR_MOVE'
 export const SET_INVALID_TURN = 'SET_INVALID_TURN'
+export const SET_GAME_STATE = 'SET_GAME_STATE'
+export const SET_GAME_WINNER = 'SET_GAME_WINNER'
 
 
 export function setGameUpdate(game) {
@@ -53,5 +55,20 @@ export function setInvalidTurn(invalidTurn) {
     return {
         type: SET_INVALID_TURN,
         invalidTurn
+    }
+}
+
+
+export function setGameState(gameState) {
+    return {
+        type: SET_GAME_STATE,
+        gameState
+    }
+}
+
+export function setGameWinner(winner) {
+    return {
+        type: SET_GAME_WINNER,
+        winner
     }
 }

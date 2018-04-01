@@ -31,6 +31,8 @@ const socketMiddleware = (function() {
                 store.dispatch(gameActions.setGameKeyUpdate(msg["og"]["GameKey"]))
                 store.dispatch(gameActions.setGameTurnUpdate(msg["og"]["CurrentTurn"]))
                 store.dispatch(userActions.setPlayerColor(msg["og"]["PlayerColors"][userName]))
+                store.dispatch(gameActions.setGameState(msg["og"]["GameState"]))
+                store.dispatch(gameActions.setGameWinner(msg["og"]["Winner"]))
                 store.dispatch(gameActions.setGameFound(true))
 
                 if(store.getState()["game"]["turn"] != userName) {
@@ -44,6 +46,7 @@ const socketMiddleware = (function() {
                 }
                 
                 break
+                
             default:
                 console.log("Received unknown message type: '"+msg.type+"'")
                 break
