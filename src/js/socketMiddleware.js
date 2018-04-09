@@ -6,6 +6,52 @@ const UPDATE_MESSAGE = "UPDATE_MESSAGE"
 const CONNECT = "CONNECT"
 const DISCONNECT = "DISCONNECT"
 const SEND_MESSAGE = "SEND_MESSAGE"
+const INVALID_MOVE_MESSAGE = "INVALID_MOVE"
+const UPDATE_REQUEST = "UPDATE_REQUEST"
+
+function handleUpdateMessage(msg, store) {
+
+    var userName = store.getState()["user"]["userName"]
+
+    var board = msg["og"]["OGame"]["Board"]
+    var gameKey = msg["og"]["GameKey"]
+    var currentTurn = msg["og"]["CurrentTurn"]
+    var playerColor = msg["og"]["PlayerColors"][userName]
+    var gameState = msg["og"]["GameState"]
+    var winner = msg["og"]["Winner"]
+
+    store.dispatch(gameActions.setGameUpdate(board))
+    store.dispatch(gameActions.setGameKeyUpdate(gameKey))
+    store.dispatch(gameActions.setGameTurnUpdate(currentTurn))
+    store.dispatch(userActions.setPlayerColor(playerColor))
+    store.dispatch(gameActions.setGameState(gameState))
+    store.dispatch(gameActions.setGameWinner(winner))
+    store.dispatch(gameActions.setGameFound(true))
+
+    if(currentTurn != userName) {
+        var key = store.getState()["game"]["key"]
+        var msg = {
+            "Action": UPDATE_REQUEST,
+            "Content": {
+                "UserName": userName,
+                "GameKey": key
+            }
+        }
+        store.dispatch(socketActions.sendMessage(msg))
+        store.dispatch(gameActions.setWaitingForMove(true))
+    }
+    else {
+        store.dispatch(gameActions.setWaitingForMove(false))
+        store.dispatch(gameActions.setInvalidTurn(false))
+    }
+                
+
+}
+
+function handleInvalidMoveMessage(msg, store) {
+
+    store.dispatch(gameActions.setInvalidMove(true))
+}
 
 const socketMiddleware = (function() {
 
@@ -25,28 +71,11 @@ const socketMiddleware = (function() {
         switch(msg.action) {
 
             case UPDATE_MESSAGE:
-                var userName = store.getState()["user"]["userName"]
-
-                store.dispatch(gameActions.setGameUpdate(msg["og"]["OGame"]["Board"]))
-                store.dispatch(gameActions.setGameKeyUpdate(msg["og"]["GameKey"]))
-                store.dispatch(gameActions.setGameTurnUpdate(msg["og"]["CurrentTurn"]))
-                store.dispatch(userActions.setPlayerColor(msg["og"]["PlayerColors"][userName]))
-                store.dispatch(gameActions.setGameState(msg["og"]["GameState"]))
-                store.dispatch(gameActions.setGameWinner(msg["og"]["Winner"]))
-                store.dispatch(gameActions.setGameFound(true))
-
-                if(store.getState()["game"]["turn"] != userName) {
-                    var key = store.getState()["game"]["key"]
-                    store.dispatch(socketActions.sendMessage({"Action": "UPDATE_REQUEST", "Content": {"UserName": userName, "GameKey": key}}))
-                    store.dispatch(gameActions.setWaitingForMove(true))
-                }
-                else {
-                    store.dispatch(gameActions.setWaitingForMove(false))
-                    store.dispatch(gameActions.setInvalidTurn(false))
-                }
-                
+                handleUpdateMessage(msg,store)
                 break
-                
+            case INVALID_MOVE_MESSAGE:
+                handleInvalidMoveMessage(msg,store)
+                break    
             default:
                 console.log("Received unknown message type: '"+msg.type+"'")
                 break
@@ -79,7 +108,6 @@ const socketMiddleware = (function() {
             
             case SEND_MESSAGE:
                 console.log(action)
-
                 socket.send(JSON.stringify(action.msg))
                 break
             

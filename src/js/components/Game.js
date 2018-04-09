@@ -22,7 +22,8 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => {
     return {
       sendMessageToSocket: (msg) => dispatch(socketActions.sendMessage(msg)),
-      invalidTurn: (invalid) => dispatch(gameActions.setInvalidTurn(invalid))
+      invalidTurn: (invalid) => dispatch(gameActions.setInvalidTurn(invalid)),
+      invalidMove: (invalidMove) => dispatch(gameActions.setInvalidMove(invalidMove))
     }
   }
 
@@ -205,11 +206,16 @@ class Game extends React.Component {
 
     constructor(props) {
         super(props);
-        this.onDismiss = this.onDismiss.bind(this)
+        this.onDismissInvalidTurn = this.onDismissInvalidTurn.bind(this)
+        this.onDismissInvalidMove = this.onDismissInvalidMove.bind(this)
     }
 
-    onDismiss() {
+    onDismissInvalidTurn() {
         this.props.invalidTurn(false)
+    }
+
+    onDismissInvalidMove() {
+        this.props.invalidMove(false)
     }
 
     handleClick(i) {
@@ -239,8 +245,11 @@ class Game extends React.Component {
         return (
 
             <div>
-                <Alert color="danger" isOpen={this.props.game.invalidTurn} toggle={this.onDismiss}>
+                <Alert color="danger" isOpen={this.props.game.invalidTurn} toggle={this.onDismissInvalidTurn}>
                     Not your turn!
+                </Alert>
+                <Alert color="danger" isOpen={this.props.game.invalidMove} toggle={this.onDismissInvalidMove}>
+                    Invalid move!
                 </Alert>
                 <GameStatus userName={this.props.user.userName} 
                             waiting={this.props.game.waitingForMove}

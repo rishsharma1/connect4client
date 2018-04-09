@@ -8,6 +8,7 @@ import {
     SET_GAME_FOUND,
     SET_WAITING_FOR_MOVE,
     SET_INVALID_TURN,
+    SET_INVALID_MOVE,
     SET_GAME_STATE,
     SET_GAME_WINNER
 } from '../actions/gameActions'
@@ -88,6 +89,17 @@ function invalidTurn(state=false,action) {
     return state
 }
 
+function invalidMove(state=false,action) {
+
+    switch(action.type) {
+
+        case SET_INVALID_MOVE:
+            return action.invalidMove
+    }
+
+    return state
+}
+
 
 function gameState(state='',action) {
 
@@ -119,6 +131,7 @@ export default combineReducers({
     gameFound,
     waitingForMove,
     invalidTurn,
+    invalidMove,
     gameState,
     winner
 })
