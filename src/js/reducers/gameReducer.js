@@ -10,7 +10,8 @@ import {
     SET_INVALID_TURN,
     SET_INVALID_MOVE,
     SET_GAME_STATE,
-    SET_GAME_WINNER
+    SET_GAME_WINNER,
+    SET_GAME_MOVES
 } from '../actions/gameActions'
 
 function game(state=Array(42).fill(null),action) {
@@ -123,6 +124,17 @@ function winner(state='',action) {
     return state
 }
 
+function moves(state=0,action) {
+
+    switch(action.type) {
+
+        case SET_GAME_MOVES:
+            return action.moves
+    }
+
+    return state
+}
+
 export default combineReducers({
     game,
     loading,
@@ -133,5 +145,6 @@ export default combineReducers({
     invalidTurn,
     invalidMove,
     gameState,
-    winner
+    winner,
+    moves
 })

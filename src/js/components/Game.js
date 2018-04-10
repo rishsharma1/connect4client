@@ -95,6 +95,12 @@ function SummaryDraw(props) {
     );
 }
 
+function Moves(props) {
+    return (
+        <p className="text-muted username">Moves: {props.moves}</p>
+    );
+}
+
 function Loading(props) {
     return (
             <div>
@@ -135,7 +141,10 @@ class Board extends React.Component {
         }
         else if(this.props.winner) {
             return (
-                <SummaryWinner winner={this.props.winner}/>
+                <div>
+                    <SummaryWinner winner={this.props.winner}/>
+                    <Moves moves={this.props.moves}/>
+                </div>
             )
         }
 
@@ -263,6 +272,7 @@ class Game extends React.Component {
                         gameFound={this.props.game.gameFound}
                         onClick={(i) => this.handleClick(i)}
                         winner={this.props.game.winner}
+                        moves={this.props.game.moves}
                     />
                 </div>
             </div>

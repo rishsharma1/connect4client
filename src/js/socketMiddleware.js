@@ -19,6 +19,7 @@ function handleUpdateMessage(msg, store) {
     var playerColor = msg["og"]["PlayerColors"][userName]
     var gameState = msg["og"]["GameState"]
     var winner = msg["og"]["Winner"]
+    var moves = msg["og"]["Moves"]
 
     store.dispatch(gameActions.setGameUpdate(board))
     store.dispatch(gameActions.setGameKeyUpdate(gameKey))
@@ -27,6 +28,7 @@ function handleUpdateMessage(msg, store) {
     store.dispatch(gameActions.setGameState(gameState))
     store.dispatch(gameActions.setGameWinner(winner))
     store.dispatch(gameActions.setGameFound(true))
+    store.dispatch(gameActions.setGameMoves(moves))
 
     if(currentTurn != userName) {
         var key = store.getState()["game"]["key"]

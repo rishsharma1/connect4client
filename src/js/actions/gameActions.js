@@ -8,6 +8,7 @@ export const SET_INVALID_TURN = 'SET_INVALID_TURN'
 export const SET_INVALID_MOVE = 'SET_INVALID_MOVE'
 export const SET_GAME_STATE = 'SET_GAME_STATE'
 export const SET_GAME_WINNER = 'SET_GAME_WINNER'
+export const SET_GAME_MOVES = 'SET_GAME_MOVES'
 
 
 export function setGameUpdate(game) {
@@ -78,5 +79,12 @@ export function setGameWinner(winner) {
     return {
         type: SET_GAME_WINNER,
         winner
+    }
+}
+
+export function setGameMoves(moves) {
+    return {
+        type: SET_GAME_MOVES,
+        moves
     }
 }
